@@ -8,14 +8,14 @@ const systeminformation = require('systeminformation')
 
 const ZERO_WIDTH_SPACE = '\u200b'
 
-process.on('SIGINT', (code) => {
+process.on('SIGINT', () => {
   console.clear()
   cursor.show()
   process.exit()
 })
 
-cursor.hide()
 console.clear()
+cursor.hide()
 start()
 
 async function start() {
