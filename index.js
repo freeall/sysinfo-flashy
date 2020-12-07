@@ -3,10 +3,14 @@ const filesize = require('filesize')
 const { format, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, subSeconds } = require('date-fns')
 const chalkAnimation = require('chalk-animation')
 const cursor = require('cli-cursor')
-const boxen = require('boxen')
 const systeminformation = require('systeminformation')
 
 const ZERO_WIDTH_SPACE = '\u200b'
+
+const cliRows = process.stdout.rows
+const cliColumns = process.stdout.columns
+const isTooSmall = cliColumns < 100 || cliRows < 20
+if (isTooSmall) return
 
 process.on('SIGINT', () => {
   console.clear()
@@ -67,15 +71,11 @@ async function getBoxedStr () {
     fixedStr('         ""88888888888888888P"', 100),
     fixedStr('              """"""""""""', 100)
   ].join('\n').replace(/ /g, ZERO_WIDTH_SPACE) // Replace all spaces with a similar character. Otherwise chalk-animation won't calculate correctly
-  const cliRows = process.stdout.rows
   const strRows = str.split('\n').length
   const padding = 1
   const marginTop = Math.max(Math.floor((cliRows - strRows) / 2) - (2 * padding), 0)
-  return boxen(str, {
-    padding,
-    float: 'center',
-    margin: { top: marginTop }
-  })
+  const centerStr = str.split('\n').map(s => center(s, cliColumns)).join('\n')
+  return Array(marginTop).fill('\n').join('') + centerStr
 }
 
 function getUptimeStr () {
@@ -94,6 +94,10 @@ function getUptimeStr () {
 
 function fixedStr(str, length) {
   return str + Array(Math.max(length - str.length, 0)).fill(' ').join('')
+}
+
+function center (str, width) {
+  return Array(Math.floor((width - str.length) / 2)).join(' ') + str
 }
 
 function plural(str, count) {

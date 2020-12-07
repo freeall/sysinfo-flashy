@@ -4,7 +4,6 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "boxen": "^4.2.0",
     "chalk-animation": "^1.6.0",
     "cli-cursor": "^3.1.0",
     "date-fns": "^2.16.1",
