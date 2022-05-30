@@ -26,11 +26,12 @@ start()
 
 async function start() {
   const str = await getBoxedStr()
-  const animation = chalkAnimation.rainbow(str, 0.5)
+  const animation = chalkAnimation.rainbow(str, 0.5).stop()
+
   setInterval(async () => {
-    const str = await getBoxedStr()
-    animation.replace(str)
-  }, 1000)
+    const frame = animation.frame()
+    console.log(frame.replace(new RegExp(ZERO_WIDTH_SPACE, 'g'), ' ')) // Hack to make chalk-animation include spaces in its animation calculation
+  }, 50)
 }
 
 async function getBoxedStr () {
