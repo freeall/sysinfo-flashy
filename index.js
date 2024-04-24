@@ -1,6 +1,6 @@
 const { networkInterfaces, uptime, loadavg } = require('os')
 const filesize = require('filesize')
-const { format, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, subSeconds } = require('date-fns')
+const { differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, subSeconds } = require('date-fns')
 const chalkAnimation = require('chalk-animation')
 const cursor = require('cli-cursor')
 const systeminformation = require('systeminformation')
@@ -47,8 +47,8 @@ async function generateStrs () {
       .entries(networkInterfaces())
       .map(([name, nets]) => {
         const netsIPv4 = nets.filter(net => net.family === 'IPv4')
-        if (name.indexOf('lo') === 0) return // ignore loopbacks
-        if (!netsIPv4.length) return // ignore non-ipv4
+        if (name.indexOf('lo') === 0) return null // ignore loopbacks
+        if (!netsIPv4.length) return null // ignore non-ipv4
         const str = netsIPv4.map(({ address }) => address).join(', ')
         return `${fixedLengthStr(name, 8)}  ::  ${str}`
       })
@@ -91,7 +91,7 @@ async function generateStrs () {
     '    `8b,             ,d8888888888P\'',
     '      `V8a,       ,ad8888888888P\'',
     '         ""88888888888888888P"',
-    '              """"""""""""',
+    '              """"""""""""'
   ]
   return strs
 }

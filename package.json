@@ -3,11 +3,16 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "test": "standard"
+  },
   "dependencies": {
     "chalk-animation": "^1.6.0",
     "cli-cursor": "^3.1.0",
     "date-fns": "^2.16.1",
     "filesize": "^6.1.0",
+    "standard": "^17.1.0",
     "systeminformation": "^4.31.0"
   }
 }
