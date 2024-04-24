@@ -50,7 +50,7 @@ async function generateStrs () {
         if (name.indexOf('lo') === 0) return null // ignore loopbacks
         if (!netsIPv4.length) return null // ignore non-ipv4
         const str = netsIPv4.map(({ address }) => address).join(', ')
-        return `${fixedLengthStr(name, 8)}  ::  ${str}`
+        return `${fixedLengthStr(name, 9)} ::  ${str}`
       })
       .filter(a => !!a)
   }
@@ -122,6 +122,7 @@ function getUptimeStr () {
 }
 
 function fixedLengthStr (str, length) {
+  if (str.length > length) return str.slice(0, length)
   return str + Array(Math.max(length - str.length, 0)).fill(' ').join('')
 }
 
