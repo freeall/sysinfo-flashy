@@ -9,24 +9,27 @@ const ZERO_WIDTH_SPACE = '\u200b'
 
 const cliRows = process.stdout.rows
 const cliColumns = process.stdout.columns
-const isTooSmall = cliColumns < 100 || cliRows < 20
-let longestWidth = 0
 
-if (isTooSmall) return
-
-process.on('SIGINT', () => {
-  console.clear()
-  cursor.show()
-  process.exit()
-})
-
-console.clear()
-cursor.hide()
 start()
 
-async function start() {
-  const str = await getBoxedStr()
-  const animation = chalkAnimation.rainbow(str, 0.5).stop()
+async function start () {
+  const strs = await generateStrs()
+  const longestStrWidth = getLongestStrWidth(strs)
+  const isTooSmall = cliColumns < longestStrWidth || cliRows < strs.length
+
+  if (isTooSmall) return
+
+  process.on('SIGINT', () => {
+    console.clear()
+    cursor.show()
+    process.exit()
+  })
+
+  console.clear()
+  cursor.hide()
+
+  const boxedStr = await generateCenteredStr(strs)
+  const animation = chalkAnimation.rainbow(boxedStr, 0.5).stop()
 
   setInterval(async () => {
     const frame = animation.frame()
@@ -34,7 +37,7 @@ async function start() {
   }, 50)
 }
 
-async function getBoxedStr () {
+async function generateStrs () {
   const mem = await systeminformation.mem()
   const info = {
     uptime: getUptimeStr(),
@@ -52,6 +55,7 @@ async function getBoxedStr () {
       .filter(a => !!a)
   }
 
+  // Use this version for a smaller yin/yang symbol
   // const strs = [
   //   '         _..oo8"""Y8b.._',
   //   '     .88888888o.    "Yb.',
@@ -89,8 +93,12 @@ async function getBoxedStr () {
     '         ""88888888888888888P"',
     '              """"""""""""',
   ]
-  longestWidth = Math.max(longestWidth, ...strs.map(s => s.length))
-  const strsWithFixedLength = strs.map(str => fixedLengthStr(str, longestWidth))
+  return strs
+}
+
+async function generateCenteredStr (strs) {
+  const longestStrWidth = getLongestStrWidth(strs)
+  const strsWithFixedLength = strs.map(str => fixedLengthStr(str, longestStrWidth))
   const strsWithoutRealSpaces = strsWithFixedLength.map(str => str.replace(/ /g, ZERO_WIDTH_SPACE)) // Replace all spaces with a similar character. Otherwise chalk-animation won't calculate correctly
   const str = strsWithoutRealSpaces.join('\n')
   const strRows = str.split('\n').length
@@ -113,7 +121,7 @@ function getUptimeStr () {
   return res.join(', ')
 }
 
-function fixedLengthStr(str, length) {
+function fixedLengthStr (str, length) {
   return str + Array(Math.max(length - str.length, 0)).fill(' ').join('')
 }
 
@@ -121,6 +129,10 @@ function center (str, width) {
   return Array(Math.floor((width - str.length) / 2)).join(' ') + str
 }
 
-function plural(str, count) {
+function plural (str, count) {
   return `${str}${count === 1 ? '' : 's'}`
+}
+
+function getLongestStrWidth (strs) {
+  return Math.max(...strs.map(s => s.length))
 }
