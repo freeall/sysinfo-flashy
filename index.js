@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { networkInterfaces, uptime, loadavg } = require('os')
 const filesize = require('filesize')
 const { differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds, subSeconds } = require('date-fns')
