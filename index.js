@@ -37,6 +37,14 @@ async function start () {
     const frame = animation.frame()
     console.log(frame.replace(new RegExp(ZERO_WIDTH_SPACE, 'g'), ' ')) // Hack to make chalk-animation include spaces in its animation calculation
   }, 50)
+
+  updateText()
+  async function updateText () {
+    const strs = await generateStrs()
+    const boxedStr = await generateCenteredStr(strs)
+    animation.replace(boxedStr)
+    setTimeout(updateText, 1000)
+  }
 }
 
 async function generateStrs () {
